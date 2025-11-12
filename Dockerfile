@@ -40,8 +40,8 @@ CMD ["rails", "server", "-b", "0.0.0.0"]
 # ============================================
 FROM node:20-alpine AS frontend
 
-# Enable corepack and prepare pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install pnpm directly via npm (avoiding corepack issues)
+RUN npm install -g pnpm@9.15.0
 
 # Set working directory
 WORKDIR /app

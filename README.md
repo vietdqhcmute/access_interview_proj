@@ -31,15 +31,19 @@ Docker Compose will automatically use your system's UID and GID to avoid file pe
 
 **Linux/macOS:**
 ```sh
-# These are usually set automatically by your shell
+# Docker Compose automatically reads $UID and $GID from your shell
+# Verify your IDs:
 echo $UID  # Should output your user ID (e.g., 1000)
 echo $GID  # Should output your group ID (e.g., 1000)
 ```
 
-**If needed**, create a `.env` file:
+**Note:** On most Linux/macOS systems, `$UID` and `$GID` are automatically set by your shell. The containers will run with these IDs to ensure files created inside the container have the correct ownership on your host machine.
+
+**If you encounter permission issues**, create a `.env` file:
 ```sh
 cp .env.example .env
-# Edit .env and set UID=$(id -u) and GID=$(id -g)
+# The .env file will use UID=1000 and GID=1000 by default
+# Edit if your IDs are different: UID=$(id -u) GID=$(id -g)
 ```
 
 ### 3. Build and run with Docker

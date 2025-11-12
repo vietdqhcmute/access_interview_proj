@@ -18,7 +18,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: backend
-    command: bash -c "bundle install && rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"
+    # Run as root to fix bundle_cache permissions, then switch to user's UID/GID
+    command: bash -c "chown -R ${UID:-1000}:${GID:-1000} /usr/local/bundle && exec setpriv --reuid=${UID:-1000} --regid=${GID:-1000} --clear-groups bash -c 'cd /app && bundle install && rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0'"
     volumes:
       - ./backend:/app
       - bundle_cache:/usr/local/bundle
@@ -32,7 +33,6 @@ services:
       DATABASE_USERNAME: root
       DATABASE_PASSWORD: password
       RAILS_ENV: development
-    user: "${UID:-1000}:${GID:-1000}"
     stdin_open: true
     tty: true
 
@@ -43,16 +43,18 @@ services:
       target: frontend
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - frontend_node_modules:/app/node_modules
     ports:
       - "5173:5173"
     environment:
       - VITE_API_URL=http://localhost:3000
-    user: "${UID:-1000}:${GID:-1000}"
+      - COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+    # Run as root initially to fix permissions, then switch to node user for Vite
+    command: sh -c "chown -R node:node /app/node_modules && su node -c 'pnpm run dev -- --host'"
     stdin_open: true
     tty: true
-    command: pnpm run dev -- --host
 
 volumes:
   mysql_data:
   bundle_cache:
+  frontend_node_modules:
