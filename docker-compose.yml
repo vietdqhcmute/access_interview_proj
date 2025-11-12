@@ -32,7 +32,7 @@ services:
       DATABASE_USERNAME: root
       DATABASE_PASSWORD: password
       RAILS_ENV: development
-    user: "${UID}:${GID}"
+    user: "${UID:-1000}:${GID:-1000}"
     stdin_open: true
     tty: true
 
@@ -48,6 +48,7 @@ services:
       - "5173:5173"
     environment:
       - VITE_API_URL=http://localhost:3000
+    user: "${UID:-1000}:${GID:-1000}"
     stdin_open: true
     tty: true
     command: pnpm run dev -- --host
