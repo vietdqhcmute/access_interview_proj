@@ -6,6 +6,9 @@ require_relative '../config/environment'
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
 
+# Allow all hosts in test environment
+Rails.application.config.hosts.clear
+
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'database_cleaner/active_record'
 require 'shoulda/matchers'
