@@ -32,6 +32,7 @@ services:
       DATABASE_USERNAME: root
       DATABASE_PASSWORD: password
       RAILS_ENV: development
+    user: "${UID}:${GID}"
     stdin_open: true
     tty: true
 
