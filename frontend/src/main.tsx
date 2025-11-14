@@ -6,7 +6,7 @@ import App from './App.tsx'
 
 import 'antd/dist/reset.css';
 import 'antd-css-utilities/utility.min.css';
-import AuthProvider from './context/AuthProvider.tsx'
+import AuthProvider from './context/Auth/AuthProvider.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {

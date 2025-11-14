@@ -1,9 +1,9 @@
 import { Form, Input, Button, Card, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../context/useAuthContext';
 import useLoginMutate from '../hooks/auth/useLoginMutate';
 import useCustomNotification from '../hooks/auth/useCustomNotification';
+import useAuth from '../context/Auth/useAuthContext';
 
 const { Title } = Typography;
 
@@ -14,18 +14,18 @@ interface LoginFormValues {
 
 export default function Login() {
   const { contextHolder, notifySuccess } = useCustomNotification();
+  const navigate = useNavigate();
+  const { login: saveAuthDataOnBrowser } = useAuth();
+  const [form] = Form.useForm();
 
   const loginSuccessCallback = (data: any, token: string) => {
     const { data: userData } = data;
     saveAuthDataOnBrowser(userData, token);
     notifySuccess('Login successful!');
-    // navigate('/dashboard');
+    navigate('/dashboard');
   }
 
   const loginMutate = useLoginMutate(loginSuccessCallback)
-  const navigate = useNavigate();
-  const { login: saveAuthDataOnBrowser } = useAuth();
-  const [form] = Form.useForm();
 
   const onFinish = (values: LoginFormValues) => {
     try {
@@ -41,14 +41,16 @@ export default function Login() {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      background: '#f0f2f5'
-    }}>
-      <Card style={{ width: 400, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+    <>
+      {contextHolder}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        background: '#f0f2f5'
+      }}>
+        <Card style={{ width: 400, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
         <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>
           Login
         </Title>
@@ -103,5 +105,6 @@ export default function Login() {
         </Form>
       </Card>
     </div>
+    </>
   );
 }

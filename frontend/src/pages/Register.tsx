@@ -1,7 +1,7 @@
 import { Form, Input, Button, Card, Typography } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import useAuth from '../context/Auth/useAuthContext';
 
 const { Title } = Typography;
 
