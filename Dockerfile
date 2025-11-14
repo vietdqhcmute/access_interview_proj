@@ -9,9 +9,9 @@ FROM ruby:3.3 AS backend
 RUN apt-get update -qq && apt-get install -y \
     nodejs \
     npm \
-    default-mysql-client \
+    postgresql-client \
     build-essential \
-    libmariadb-dev \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install yarn

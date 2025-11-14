@@ -4,8 +4,8 @@ source "https://rubygems.org"
 gem "rails", "~> 7.2.3"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
-# Use mysql as the database for Active Record
-gem "mysql2", "~> 0.5"
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.5"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
@@ -33,6 +33,11 @@ gem "bootsnap", require: false
 
 # Handle Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
+gem "sidekiq", "~> 8.0"
+gem "devise", "~> 4.9"
+gem 'devise-jwt', '~> 0.12.1'
+gem 'jwt', '~> 2.7'
+gem 'jsonapi-serializer', '~> 2.2'
 
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
@@ -65,3 +70,4 @@ group :test do
   gem 'database_cleaner-active_record', '~> 2.1'
   gem 'simplecov', require: false
 end
+
