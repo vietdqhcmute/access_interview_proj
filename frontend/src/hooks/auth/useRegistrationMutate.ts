@@ -3,16 +3,24 @@ import { message } from 'antd';
 import axios from '../../lib/axios';
 
 interface RegistrationCredentials {
-  email: string;
-  password: string;
+  user: {
+    email: string;
+    password: string;
+  }
 }
 
-const registrationRequest = async (credentials: RegistrationCredentials): Promise<RegistrationResponse> => {
-  const { data } = await axios.post('/users/registration', credentials);
+interface RegistrationResponse {
+  id: string;
+  email: string;
+  name?: string;
+}
+
+const registrationRequest = async (params: RegistrationCredentials): Promise<RegistrationResponse> => {
+  const { data } = await axios.post('/users/registration', params);
   return data;
 };
 
-const useRegistrationMutate = (successCallback: () => void) => {
+const useRegistrationMutate = (successCallback: (data: RegistrationResponse) => void) => {
 
   return useMutation({
     mutationFn: registrationRequest,

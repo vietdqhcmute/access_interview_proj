@@ -2,6 +2,8 @@ import { Form, Input, Button, Card, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuthContext';
+import useLoginMutate from '../hooks/auth/useLoginMutate';
+import useCustomNotification from '../hooks/auth/useCustomNotification';
 
 const { Title } = Typography;
 
@@ -11,27 +13,32 @@ interface LoginFormValues {
 }
 
 export default function Login() {
+  const { contextHolder, notifySuccess } = useCustomNotification();
+
+  const loginSuccessCallback = (data: any, token: string) => {
+    const { data: userData } = data;
+    saveAuthDataOnBrowser(userData, token);
+    notifySuccess('Login successful!');
+    // navigate('/dashboard');
+  }
+
+  const loginMutate = useLoginMutate(loginSuccessCallback)
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login: saveAuthDataOnBrowser } = useAuth();
   const [form] = Form.useForm();
 
-  const onFinish = async (values: LoginFormValues) => {
+  const onFinish = (values: LoginFormValues) => {
     try {
-      console.log('Login values:', values);
-
-      const mockUser = {
-        id: '1',
-        email: values.email,
-        name: 'User Name',
-      };
-      const mockToken = 'mock-jwt-token';
-
-      login(mockUser, mockToken);
-      navigate('/dashboard');
+      loginMutate.mutate(values);
     } catch (error) {
       console.error('Login failed:', error);
     }
   };
+
+  const defaultUser = {
+    email: "vietdqhcmute@gmail.com",
+    password: "abc123"
+  }
 
   return (
     <div style={{
@@ -52,6 +59,7 @@ export default function Login() {
           onFinish={onFinish}
           autoComplete="off"
           layout="vertical"
+          initialValues={defaultUser}
         >
           <Form.Item
             label="Email"
