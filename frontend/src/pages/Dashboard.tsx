@@ -69,7 +69,7 @@ export default function Dashboard() {
     name: 'file',
     accept: '.csv',
     showUploadList: false,
-    action: '/api/upload', // Replace with your actual upload URL
+    action: '/csv_uploads', // Replace with your actual upload URL
     headers: {
       authorization: `Bearer ${localStorage.getItem('token')}`,
     },
