@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ConfigProvider, Layout } from 'antd';
-import { AuthProvider } from './context/AuthContext';
+import AuthProvider from './context/AuthProvider';
 
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
