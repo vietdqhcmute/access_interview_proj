@@ -1,7 +1,7 @@
 import { Form, Input, Button, Card, Typography } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
-import useAuth from '../context/Auth/useAuthContext';
+import { useNavigate, Link } from 'react-router-dom';
+import useRegistrationMutate from '../hooks/auth/useRegistrationMutate';
 
 const { Title } = Typography;
 
@@ -12,27 +12,68 @@ interface RegisterFormValues {
   confirmPassword: string;
 }
 
+interface RegistrationResponse {
+  data: {
+    id: string;
+    email: string;
+    name?: string;
+  },
+  status: {
+    code: number;
+    message: string;
+  }
+}
+
 export default function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
   const [form] = Form.useForm();
+
+  const successCallback = (data: RegistrationResponse) => {
+    const { data: resData, status } = data;
+    if (status.code === 200 || status.code === 201) {
+      const { email } = resData;
+      sessionStorage.setItem('registeredEmail', email);
+      navigate('/login');
+    }
+  };
+
+  const errorCallback = (error: any) => {
+    const response = error.response;
+    const { data } = response;
+    const { code, message } = data.status;
+
+    form.setFields([
+      {
+        name: 'email',
+        errors: code === 422 ? [message || 'Email is already registered.'] : [],
+      },
+    ]);
+  };
+
+  const registrationMutate = useRegistrationMutate(successCallback, errorCallback);
+
 
   const onFinish = async (values: RegisterFormValues) => {
     try {
       console.log('Register values:', values);
+      registrationMutate.mutate({
+        user: {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+        }
+      });
 
-      const mockUser = {
-        id: '1',
-        email: values.email,
-        name: values.name,
-      };
-      const mockToken = 'mock-jwt-token';
-
-      login(mockUser, mockToken);
-      navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
     }
+  };
+
+  const defaultRegister = {
+    name: "Viet Do",
+    email: "@example.com",
+    password: "password123",
+    confirmPassword: "password123"
   };
 
   return (
@@ -54,6 +95,7 @@ export default function Register() {
           onFinish={onFinish}
           autoComplete="off"
           layout="vertical"
+          initialValues={defaultRegister}
         >
           <Form.Item
             label="Name"
@@ -130,7 +172,7 @@ export default function Register() {
           </Form.Item>
 
           <div style={{ textAlign: 'center' }}>
-            Already have an account? <a href="/login">Login</a>
+            Already have an account? <Link to="/login">Login</Link>
           </div>
         </Form>
       </Card>

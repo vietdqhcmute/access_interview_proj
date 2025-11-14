@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { message } from 'antd';
 import axios from '../../lib/axios';
+import type { FixMeLater } from '../../utils/types';
 
 interface RegistrationCredentials {
   user: {
+    name: string;
     email: string;
     password: string;
   }
@@ -16,20 +17,19 @@ interface RegistrationResponse {
 }
 
 const registrationRequest = async (params: RegistrationCredentials): Promise<RegistrationResponse> => {
-  const { data } = await axios.post('/users/registration', params);
+  const { data } = await axios.post('/signup', params);
   return data;
 };
 
-const useRegistrationMutate = (successCallback: (data: RegistrationResponse) => void) => {
+const useRegistrationMutate = (successCallback: (data: RegistrationResponse) => void, errorCallback: (error: any) => void) => {
 
   return useMutation({
     mutationFn: registrationRequest,
     onSuccess: (data) => {
       successCallback(data);
     },
-    onError: (error: any) => {
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
-      message.error(errorMessage);
+    onError: (error: FixMeLater) => {
+      errorCallback(error);
     },
   });
 };
