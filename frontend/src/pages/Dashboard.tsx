@@ -1,4 +1,4 @@
-import { Layout, Avatar, Button, Tabs, Dropdown } from 'antd';
+import { Layout, Avatar, Button, Tabs, Dropdown, Upload } from 'antd';
 import { PlusOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import useAuth from "../context/Auth/useAuthContext";
@@ -65,6 +65,23 @@ export default function Dashboard() {
     return <UserOutlined />;
   };
 
+  const uploadProps = {
+    name: 'file',
+    accept: '.csv',
+    showUploadList: false,
+    action: '/api/upload', // Replace with your actual upload URL
+    headers: {
+      authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+    onChange(info: any) {
+      if (info.file.status === 'done') {
+        console.log(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        console.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Header style={{
@@ -76,16 +93,7 @@ export default function Dashboard() {
         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
       }}>
         <h2 style={{ margin: 0 }}>Dashboard</h2>
-
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleAddCSV}
-          >
-            Add CSV
-          </Button>
-
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>
             <div className="user-info" style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
               <Avatar
@@ -107,6 +115,18 @@ export default function Dashboard() {
       </Header>
 
       <Content style={{ padding: '24px' }}>
+        <div className='row w-full mb-2 justify-end'>
+          <Upload {...uploadProps}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={handleAddCSV}
+            >
+              Add CSV
+            </Button>
+          </Upload>
+
+        </div>
         <div style={{
           background: '#fff',
           padding: '24px',
