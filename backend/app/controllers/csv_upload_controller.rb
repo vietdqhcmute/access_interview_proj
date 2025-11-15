@@ -34,6 +34,6 @@ class CsvUploadController < ApplicationController
 
   def show
     csv_upload = current_user.csv_uploads.find(params[:id])
-    render json: CsvUploadSerializer.new(csv_upload).serializable_hash, status: :ok
+    render json: CsvUploadDetailSerializer.new(csv_upload).serializable_hash, status: :ok
   end
 end

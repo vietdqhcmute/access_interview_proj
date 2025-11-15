@@ -1,6 +1,7 @@
 import React from 'react';
 import { List, Typography, Tag, Progress } from 'antd';
 import { FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -53,7 +54,9 @@ const CsvUploadListItem: React.FC<CsvUploadListItemProps> = ({ item }) => {
         avatar={<FileTextOutlined style={{ fontSize: '24px', color: '#1890ff' }} />}
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Text strong>{item.filename}</Text>
+            <Link to={`/upload/${item.id}`} style={{ textDecoration: 'none' }}>
+              <Typography.Link strong>{item.filename}</Typography.Link>
+            </Link>
             {getStatusTag(item.status)}
           </div>
         }
