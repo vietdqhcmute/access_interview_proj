@@ -1,5 +1,8 @@
+require "csv"
+
 class CsvUploadController < ApplicationController
-  require "csv"
+  include ::CsvUploadHelper
+  include ::KeywordHelper
   before_action :authenticate_user!
 
   def create
@@ -7,24 +10,21 @@ class CsvUploadController < ApplicationController
       render json: { error: 'No file uploaded' }, status: :bad_request
       return
     end
-    binding.break
-    render json: { message: "#{1} users created successfully" }, status: :created
 
-    # begin
-    #   csv_text = params[:file].read
-    #   csv = CSV.parse(csv_text, headers: true)
-    #   created_count = 0
-    #   csv.each do |row|
-    #     user_params = row.to_hash.slice('name', 'email')
-    #     user = User.new(user_params)
-    #     if user.save
-    #       created_count += 1
-    #     end
-    #   end
-    #   render json: { message: "#{created_count} users created successfully" }, status: :created
-    # rescue => e
-    #   render json: { error: e.message }, status: :unprocessable_entity
-    # end
+    begin
+      csv_file_name = params[:file].original_filename
+      csv_keyword_list = get_csv_list_from_upload(params[:file])
+
+      csv_upload = create_csv_record(current_user, csv_file_name, csv_keyword_list.size)
+      csv_keyword_list.each do |keyword|
+        create_keyword_record(keyword, csv_upload)
+        ::Jobs::CrawlWikipediaJob.perform_later(keyword, csv_upload.id)
+      end
+
+      render json: { message: "#{created_count} users created successfully" }, status: :created
+    rescue => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
   end
 
   def index
