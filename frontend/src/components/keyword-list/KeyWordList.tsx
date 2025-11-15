@@ -44,7 +44,7 @@ const KeyWordList: React.FC<KeyWordListProps> = ({ data, loading = false }) => {
       },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.processing;
+    const config = status ? statusConfig[status as keyof typeof statusConfig] || statusConfig.processing : statusConfig.processing;
 
     return (
       <Tag color={config.color} icon={config.icon}>

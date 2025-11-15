@@ -5,10 +5,9 @@ class HtmlParserService
     @html_content = html_content
   end
 
-  def parse
-    # Example parsing logic: extract all text within <p> tags
-    doc = Nokogiri::HTML(@html_content)
-    paragraphs = doc.css('p').map(&:text)
-    paragraphs
+  protected
+
+  def doc
+    @doc ||= Nokogiri::HTML(@html_content)
   end
 end
