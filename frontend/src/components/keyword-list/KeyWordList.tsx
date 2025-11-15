@@ -22,9 +22,10 @@ interface KeywordItem {
 interface KeyWordListProps {
   data: KeywordItem[];
   loading?: boolean;
+  uploadId: number;
 }
 
-const KeyWordList: React.FC<KeyWordListProps> = ({ data, loading = false }) => {
+const KeyWordList: React.FC<KeyWordListProps> = ({ uploadId, data, loading = false }) => {
   const getStatusTag = (status: string) => {
     const statusConfig = {
       [PROCESS_STATUS.PROCESSING]: {
@@ -44,7 +45,7 @@ const KeyWordList: React.FC<KeyWordListProps> = ({ data, loading = false }) => {
       },
     };
 
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.processing;
+    const config = status ? statusConfig[status as keyof typeof statusConfig] || statusConfig.processing : statusConfig.processing;
 
     return (
       <Tag color={config.color} icon={config.icon}>
@@ -69,7 +70,7 @@ const KeyWordList: React.FC<KeyWordListProps> = ({ data, loading = false }) => {
           <List.Item.Meta
             title={
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Link to={`/keyword/${item.id}`} style={{ textDecoration: 'none' }}>
+                <Link to={`/upload/${uploadId}/keyword/${item.id}`} style={{ textDecoration: 'none' }}>
                   <Text strong>{item.term}</Text>
                 </Link>
                 {getStatusTag(item.status)}

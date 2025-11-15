@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const useFetchCsvUploadDetail = (id: number) => {
+const useFetchKeywordDetail = (id: string) => {
   const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ['csvUploadDetail', id],
+    queryKey: ['keywordDetail', id],
     queryFn: async () => {
-      const response = await axios.get(`/api/csv_upload/${id}`);
+      const response = await axios.get(`/api/keywords/${id}`);
       return response.data;
     }
   });
@@ -18,4 +18,4 @@ const useFetchCsvUploadDetail = (id: number) => {
   };
 };
 
-export default useFetchCsvUploadDetail;
+export default useFetchKeywordDetail;
