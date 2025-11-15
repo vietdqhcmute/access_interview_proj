@@ -27,4 +27,5 @@ Rails.application.routes.draw do
   # root "posts#index"
   resources :users, only: [:create, :show, :index]
   resources :csv_upload, only: [:create, :index, :show]
+  resources :keywords, only: [:index, :show]
 end

@@ -21,7 +21,7 @@ function StaticPages() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/upload/new" element={<UploadNew />} />
           <Route path="/upload/:id" element={<UploadDetail />} />
-          <Route path="/keyword/:id" element={<KeywordDetail />} />
+          <Route path="/upload/:uploadId/keyword/:id" element={<KeywordDetail />} />
         </Routes>
       </Suspense>
     </Layout>

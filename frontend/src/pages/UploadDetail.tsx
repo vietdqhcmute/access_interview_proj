@@ -13,7 +13,6 @@ export default function UploadDetail() {
   const { id } = useParams();
   const { data } = useFetchCsvUploadDetail(Number(id));
   const csvDetailData = data?.data?.attributes || {};
-  console.log('CSV Detail Data:', csvDetailData);
   const keywords = csvDetailData?.keywords || [];
   const inProgressKeywords = useMemo(() =>
     keywords.filter((kw: any) => kw.status === PROCESS_STATUS.PROCESSING),
@@ -57,7 +56,7 @@ export default function UploadDetail() {
       label: 'All Keywords',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList data={keywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={keywords} loading={false} />
         </div>
       ),
     },
@@ -66,7 +65,7 @@ export default function UploadDetail() {
       label: 'Processing',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList data={inProgressKeywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={inProgressKeywords} loading={false} />
         </div>
       ),
     },
@@ -75,7 +74,7 @@ export default function UploadDetail() {
       label: 'Completed',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList data={completedKeywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={completedKeywords} loading={false} />
         </div>
       ),
     },
