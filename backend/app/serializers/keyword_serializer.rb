@@ -7,6 +7,7 @@ class KeywordSerializer < BaseSerializer
       resultsWithThumbnails: object.search_result.results_with_thumbnails,
       resultsWithoutThumbnails: object.search_result.results_without_thumbnails,
       totalLinks: object.search_result.total_links,
+      htmlContent: object.search_result.html_content,
       createdAt: object.search_result.created_at,
       updatedAt: object.search_result.updated_at
     }

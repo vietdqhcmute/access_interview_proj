@@ -6,6 +6,7 @@ import PageHeader from '../components/PageHeader';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
 import { useMemo } from 'react';
 import KeyWordList from '../components/keyword-list/KeyWordList';
+import { getStatusLabel } from '../utils/handlers';
 
 const { Content } = Layout;
 
@@ -26,23 +27,6 @@ export default function UploadDetail() {
     keywords.filter((kw: any) => kw.status === PROCESS_STATUS.FAILED),
     [keywords]
   );
-
-  const getStatusTag = (status: string) => {
-    const statusConfig = {
-      processing: { color: 'processing', icon: <ClockCircleOutlined />, text: 'Processing' },
-      successful: { color: 'success', icon: <CheckCircleOutlined />, text: 'Successful' },
-      failed: { color: 'error', icon: <CloseCircleOutlined />, text: 'Failed' },
-    };
-
-    const config = statusConfig[status as keyof typeof statusConfig];
-    if (!config) return null;
-
-    return (
-      <Tag color={config.color} icon={config.icon}>
-        {config.text}
-      </Tag>
-    );
-  };
 
   const getProgress = () => {
     if (!csvDetailData?.totalKeyword) return 0;
@@ -114,12 +98,9 @@ export default function UploadDetail() {
             <Col xs={24} sm={12} md={6}>
               <Statistic
                 title="Status"
-                value=""
+                value={getStatusLabel(csvDetailData?.status) || 'N/A'}
                 valueStyle={{ fontSize: '16px' }}
               />
-              <div style={{ marginTop: '8px' }}>
-                {getStatusTag(csvDetailData?.status)}
-              </div>
             </Col>
             <Col xs={24} sm={12} md={6}>
               <Statistic
