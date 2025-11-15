@@ -1,7 +1,112 @@
+import { Layout, Button, Tabs, Upload } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import useAuth from "../context/Auth/useAuthContext";
+import useFetchCsvUpload from '../hooks/csv_dashboard/useFetchCsvUpload';
+import { PROCESS_STATUS } from '../constants/dashboard-constants';
+import type { FixMeLater } from '../utils/types';
+import { useMemo } from 'react';
+import CsvUploadList from '../components/csv-upload-list/CsvUploadList';
+import PageHeader from '../components/PageHeader';
+
+const {  Content } = Layout;
+
 export default function Dashboard() {
+  const { user } = useAuth();
+  const { data: csvData } = useFetchCsvUpload();
+
+  console.log('Current user:', user);
+
+  const inProgressItems = useMemo(() =>
+    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.PROCESSING) || [],
+    [csvData]
+  );
+
+  const doneItems = useMemo(() =>
+    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.SUCCESSFULL) || [],
+    [csvData]
+  );
+
+  const failedItems = useMemo(() =>
+    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.FAILED) || [],
+    [csvData]
+  );
+
+  const handleAddCSV = () => {
+    console.log('Add CSV clicked');
+  };
+
+  const tabItems = [
+    {
+      key: 'done',
+      label: 'Done',
+      children: (
+        <div style={{ padding: '24px' }}>
+          <CsvUploadList data={doneItems} loading={false} />
+        </div>
+      ),
+    },
+    {
+      key: 'in-progress',
+      label: 'In Progress',
+      children: (
+        <div style={{ padding: '24px' }}>
+          <CsvUploadList data={inProgressItems} loading={false} />
+        </div>
+      ),
+    },
+    {
+      key: 'failed',
+      label: 'Failed',
+      children: (
+        <div style={{ padding: '24px' }}>
+          <CsvUploadList data={failedItems} loading={false} />
+        </div>
+      ),
+    },
+  ];
+
+  const uploadProps = {
+    name: 'file',
+    accept: '.csv',
+    showUploadList: false,
+    action: '/api/csv_upload', // Replace with your actual upload URL
+    headers: {
+      authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+    onChange(info: any) {
+      if (info.file.status === 'done') {
+        console.log(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        console.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
   return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+    <Layout style={{ minHeight: '100vh' }}>
+      <PageHeader title="Dashboard" />
+      <Content style={{ padding: '24px' }}>
+        <div className='row w-full mb-2 justify-end'>
+          <Upload {...uploadProps}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={handleAddCSV}
+            >
+              Add CSV
+            </Button>
+          </Upload>
+
+        </div>
+        <div style={{
+          background: '#fff',
+          padding: '24px',
+          borderRadius: '8px',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+        }}>
+          <Tabs defaultActiveKey="done" items={tabItems} />
+        </div>
+      </Content>
+    </Layout>
   );
 }

@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_11_14_025136) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_15_024459) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "csv_uploads", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "filename"
+    t.integer "total_keyword"
+    t.integer "processed_keywords"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_csv_uploads_on_user_id"
+  end
 
   create_table "jwt_denylist", force: :cascade do |t|
     t.string "jti", null: false
@@ -20,6 +31,28 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_14_025136) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["jti"], name: "index_jwt_denylist_on_jti"
+  end
+
+  create_table "keywords", force: :cascade do |t|
+    t.bigint "csv_upload_id", null: false
+    t.string "term"
+    t.string "status"
+    t.text "error_message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["csv_upload_id"], name: "index_keywords_on_csv_upload_id"
+  end
+
+  create_table "search_results", force: :cascade do |t|
+    t.bigint "keyword_id", null: false
+    t.integer "total_results"
+    t.integer "results_with_thumbnails"
+    t.integer "results_without_thumbnails"
+    t.integer "total_links"
+    t.text "html_content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["keyword_id"], name: "index_search_results_on_keyword_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -33,4 +66,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_11_14_025136) do
     t.datetime "remember_created_at"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "csv_uploads", "users"
+  add_foreign_key "keywords", "csv_uploads"
+  add_foreign_key "search_results", "keywords"
 end
