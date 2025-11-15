@@ -47,7 +47,7 @@ export default function Login() {
 
   const defaultUser = {
     email: "vietdqhcmute@gmail.com",
-    password: "abc123"
+    password: "password123"
   }
 
   return (

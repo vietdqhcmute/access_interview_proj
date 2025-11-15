@@ -10,6 +10,8 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  console.log('Current user:', user);
+
   const handleAddCSV = () => {
     console.log('Add CSV clicked');
   };
