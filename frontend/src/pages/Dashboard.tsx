@@ -3,14 +3,35 @@ import { PlusOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import useAuth from "../context/Auth/useAuthContext";
 import { useNavigate } from 'react-router-dom';
+import useFetchCsvUpload from '../hooks/csv_dashboard/useFetchCsvUpload';
+import { PROCESS_STATUS } from '../constants/dashboard-constants';
+import type { FixMeLater } from '../utils/types';
+import { useMemo } from 'react';
+import CsvUploadList from '../components/CsvUploadList';
 
 const { Header, Content } = Layout;
 
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { data: csvData } = useFetchCsvUpload();
 
   console.log('Current user:', user);
+
+  const inProgressItems = useMemo(() =>
+    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.PROCESSING) || [],
+    [csvData]
+  );
+
+  const doneItems = useMemo(() =>
+    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.SUCCESSFULL) || [],
+    [csvData]
+  );
+
+  const failedItems = useMemo(() =>
+    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.FAILED) || [],
+    [csvData]
+  );
 
   const handleAddCSV = () => {
     console.log('Add CSV clicked');
@@ -36,7 +57,7 @@ export default function Dashboard() {
       label: 'Done',
       children: (
         <div style={{ padding: '24px' }}>
-          <p>Done items will appear here</p>
+          <CsvUploadList data={doneItems} loading={false} />
         </div>
       ),
     },
@@ -45,7 +66,7 @@ export default function Dashboard() {
       label: 'In Progress',
       children: (
         <div style={{ padding: '24px' }}>
-          <p>In progress items will appear here</p>
+          <CsvUploadList data={inProgressItems} loading={false} />
         </div>
       ),
     },
@@ -54,7 +75,7 @@ export default function Dashboard() {
       label: 'Failed',
       children: (
         <div style={{ padding: '24px' }}>
-          <p>Failed items will appear here</p>
+          <CsvUploadList data={failedItems} loading={false} />
         </div>
       ),
     },
