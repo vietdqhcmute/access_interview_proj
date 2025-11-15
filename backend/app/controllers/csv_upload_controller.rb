@@ -18,7 +18,7 @@ class CsvUploadController < ApplicationController
       csv_upload = create_csv_record(current_user, csv_file_name, csv_keyword_list.size)
       csv_keyword_list.each do |keyword|
         create_keyword_record(keyword, csv_upload)
-        ::Jobs::CrawlWikipediaJob.perform_later(keyword, csv_upload.id)
+        CrawlWikipediaJob.perform_later(keyword, csv_upload.id)
       end
 
       render json: { message: "#{created_count} users created successfully" }, status: :created

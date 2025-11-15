@@ -1,7 +1,3 @@
-require 'sidekiq'
-module Jobs
-  class BaseJob < ApplicationJob
-    include Sidekiq::Job
-
-  end
+class BaseJob < ApplicationJob
+  queue_as :default
 end
