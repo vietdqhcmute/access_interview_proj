@@ -2,6 +2,7 @@ import React from 'react';
 import { List, Typography, Tag, Progress } from 'antd';
 import { FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { FAILED, PROCESS_STATUS, PROCESSING, SUCCESSFULL } from '../../constants/dashboard-constants';
 
 const { Text } = Typography;
 
@@ -10,7 +11,7 @@ interface CsvUploadItem {
   filename: string;
   totalKeyword: number;
   processedKeywords: number;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: typeof PROCESSING | typeof SUCCESSFULL | typeof FAILED;
   createdAt: string;
   updatedAt: string;
 }
@@ -22,10 +23,9 @@ interface CsvUploadListItemProps {
 const CsvUploadListItem: React.FC<CsvUploadListItemProps> = ({ item }) => {
   const getStatusTag = (status: string) => {
     const statusConfig = {
-      pending: { color: 'default', icon: <ClockCircleOutlined />, text: 'Pending' },
-      processing: { color: 'processing', icon: <ClockCircleOutlined />, text: 'Processing' },
-      completed: { color: 'success', icon: <CheckCircleOutlined />, text: 'Completed' },
-      failed: { color: 'error', icon: <CloseCircleOutlined />, text: 'Failed' },
+      [PROCESS_STATUS.PROCESSING]: { color: 'processing', icon: <ClockCircleOutlined />, text: 'Processing' },
+      [PROCESS_STATUS.SUCCESSFULL]: { color: 'success', icon: <CheckCircleOutlined />, text: 'Completed' },
+      [PROCESS_STATUS.FAILED]: { color: 'error', icon: <CloseCircleOutlined />, text: 'Failed' },
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
