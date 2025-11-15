@@ -21,17 +21,19 @@ class CsvUploadController < ApplicationController
         CrawlWikipediaJob.perform_later(keyword, csv_upload.id)
       end
 
-      render json: { message: "#{created_count} users created successfully" }, status: :created
+      render json: CsvUploadSerializer.new(csv_upload).serializable_hash, status: :created
     rescue => e
       render json: { error: e.message }, status: :unprocessable_entity
     end
   end
 
   def index
-    render json: { message: 'CSV Upload Endpoint' }
+    csv_uploads = current_user.csv_uploads
+    render json: CsvUploadSerializer.new(csv_uploads).serializable_hash, status: :ok
   end
 
   def show
-    render json: { message: 'Show CSV Upload Endpoint' }
+    csv_upload = current_user.csv_uploads.find(params[:id])
+    render json: CsvUploadSerializer.new(csv_upload).serializable_hash, status: :ok
   end
 end
