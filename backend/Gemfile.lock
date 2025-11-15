@@ -139,6 +139,12 @@ GEM
       railties (>= 6.1.0)
     faker (3.5.2)
       i18n (>= 1.8.11, < 2)
+    faraday (2.14.0)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.2)
+      net-http (~> 0.5)
     globalid (1.3.0)
       activesupport (>= 6.1)
     i18n (1.14.7)
@@ -177,6 +183,8 @@ GEM
     mini_mime (1.1.5)
     minitest (5.26.1)
     msgpack (1.8.0)
+    net-http (0.8.0)
+      uri (>= 0.11.1)
     net-imap (0.5.12)
       date
       net-protocol
@@ -353,6 +361,7 @@ GEM
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.1.0)
+    uri (1.1.1)
     useragent (0.16.11)
     warden (1.2.9)
       rack (>= 2.0.9)
@@ -388,10 +397,12 @@ DEPENDENCIES
   devise-jwt (~> 0.12.1)
   factory_bot_rails (~> 6.4)
   faker (~> 3.2)
+  faraday (~> 2.14)
   importmap-rails
   jbuilder
   jsonapi-serializer (~> 2.2)
   jwt (~> 2.7)
+  nokogiri (~> 1.18)
   pg (~> 1.5)
   puma (>= 5.0)
   rack-cors
