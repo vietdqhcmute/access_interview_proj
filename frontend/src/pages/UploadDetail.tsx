@@ -6,6 +6,7 @@ import PageHeader from '../components/PageHeader';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
 import { useMemo } from 'react';
 import KeyWordList from '../components/keyword-list/KeyWordList';
+import { getStatusLabel } from '../utils/handlers';
 
 const { Content } = Layout;
 
@@ -13,7 +14,6 @@ export default function UploadDetail() {
   const { id } = useParams();
   const { data } = useFetchCsvUploadDetail(Number(id));
   const csvDetailData = data?.data?.attributes || {};
-  console.log('CSV Detail Data:', csvDetailData);
   const keywords = csvDetailData?.keywords || [];
   const inProgressKeywords = useMemo(() =>
     keywords.filter((kw: any) => kw.status === PROCESS_STATUS.PROCESSING),
@@ -28,23 +28,6 @@ export default function UploadDetail() {
     [keywords]
   );
 
-  const getStatusTag = (status: string) => {
-    const statusConfig = {
-      processing: { color: 'processing', icon: <ClockCircleOutlined />, text: 'Processing' },
-      successful: { color: 'success', icon: <CheckCircleOutlined />, text: 'Successful' },
-      failed: { color: 'error', icon: <CloseCircleOutlined />, text: 'Failed' },
-    };
-
-    const config = statusConfig[status as keyof typeof statusConfig];
-    if (!config) return null;
-
-    return (
-      <Tag color={config.color} icon={config.icon}>
-        {config.text}
-      </Tag>
-    );
-  };
-
   const getProgress = () => {
     if (!csvDetailData?.totalKeyword) return 0;
     return Math.round((csvDetailData.processedKeywords / csvDetailData.totalKeyword) * 100);
@@ -57,7 +40,7 @@ export default function UploadDetail() {
       label: 'All Keywords',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList data={keywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={keywords} loading={false} />
         </div>
       ),
     },
@@ -66,7 +49,7 @@ export default function UploadDetail() {
       label: 'Processing',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList data={inProgressKeywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={inProgressKeywords} loading={false} />
         </div>
       ),
     },
@@ -75,7 +58,7 @@ export default function UploadDetail() {
       label: 'Completed',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList data={completedKeywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={completedKeywords} loading={false} />
         </div>
       ),
     },
@@ -115,12 +98,9 @@ export default function UploadDetail() {
             <Col xs={24} sm={12} md={6}>
               <Statistic
                 title="Status"
-                value=""
+                value={getStatusLabel(csvDetailData?.status) || 'N/A'}
                 valueStyle={{ fontSize: '16px' }}
               />
-              <div style={{ marginTop: '8px' }}>
-                {getStatusTag(csvDetailData?.status)}
-              </div>
             </Col>
             <Col xs={24} sm={12} md={6}>
               <Statistic
