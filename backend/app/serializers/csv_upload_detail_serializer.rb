@@ -1,5 +1,4 @@
-class CsvUploadDetailSerializer
-  include JSONAPI::Serializer
+class CsvUploadDetailSerializer < BaseSerializer
   attributes :id, :filename, :total_keyword, :processed_keywords, :keywords, :created_at, :status
 
   attribute :keywords do |object|
@@ -8,8 +7,8 @@ class CsvUploadDetailSerializer
         id: keyword.id,
         term: keyword.term,
         status: keyword.status,
-        error_message: keyword.error_message,
-        created_at: keyword.created_at
+        errorMessage: keyword.error_message,
+        createdAt: keyword.created_at
       }
     end
   end

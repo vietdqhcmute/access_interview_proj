@@ -1,4 +1,3 @@
-class CsvUploadSerializer
-  include JSONAPI::Serializer
+class CsvUploadSerializer < BaseSerializer
   attributes :id, :filename, :total_keyword, :processed_keywords, :created_at, :status
 end

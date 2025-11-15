@@ -1,4 +1,3 @@
-class UserSerializer
-  include JSONAPI::Serializer
+class UserSerializer < BaseSerializer
   attributes :id, :email, :name, :created_at
 end
