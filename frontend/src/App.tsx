@@ -4,6 +4,7 @@ import { ConfigProvider, Layout } from 'antd';
 import useCustomNotification from './hooks/auth/useCustomNotification';
 import AuthProvider from './context/Auth/AuthProvider';
 
+const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -16,6 +17,7 @@ function StaticPages() {
     <Layout className='xl-h-screen'>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
