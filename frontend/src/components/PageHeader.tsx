@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Layout, Avatar, Dropdown, type MenuProps } from 'antd';
+import { Layout, Avatar, Dropdown, type MenuProps, Typography } from 'antd';
 import { ArrowLeftOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import useAuth from '../context/Auth/useAuthContext';
 import useLogoutMutate from '../hooks/auth/useLogoutMutate';
@@ -52,7 +52,7 @@ const PageHeader: React.FC<PageHeaderProps> = (props) => {
         {backLink && <Link to={backLink} style={{ textDecoration: 'none' }}>
           <ArrowLeftOutlined style={{ fontSize: '24px', color: '#1890ff' }} />
         </Link>}
-        <h2 style={{ margin: 0 }}>{title}</h2>
+        <Typography.Title level={2} style={{ margin: 0 }}>{title}</Typography.Title>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" trigger={['click']}>

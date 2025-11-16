@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import camelcaseKeys from "camelcase-keys";
 import axiosInstance from "../../lib/axios";
 
 const useFetchCsvUpload = () => {
@@ -8,11 +7,12 @@ const useFetchCsvUpload = () => {
     queryFn: async () => {
       const response = await axiosInstance.get(`/csv_upload`);
       return response.data;
-    }
+    },
+    refetchInterval: 5000, // Poll every 5 seconds
   });
 
   return {
-    data: camelcaseKeys(data, { deep: true }) || [],
+    data: data || [],
     error,
     isLoading,
     refetch,
