@@ -1,0 +1,5 @@
+cleanup_false_crawling_progress:
+  cron: "*/5 * * * *"  # Run every 5 minutes
+  class: "CleanupFalseCrawlingProgressWorker"
+  queue: scheduler
+  description: "Clean up false crawling progress data"

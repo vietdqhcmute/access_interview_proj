@@ -62,7 +62,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: backend
-    command: bash -c "chown -R ${UID:-1000}:${GID:-1000} /usr/local/bundle && exec setpriv --reuid=${UID:-1000} --regid=${GID:-1000} --clear-groups bash -c 'cd /app && bundle install && bundle exec sidekiq'"
+    command: bash -c "chown -R ${UID:-1000}:${GID:-1000} /usr/local/bundle && exec setpriv --reuid=${UID:-1000} --regid=${GID:-1000} --clear-groups bash -c 'cd /app && bundle install && bundle exec sidekiq -C config/sidekiq.yml'"
     volumes:
       - ./backend:/app
       - bundle_cache:/usr/local/bundle

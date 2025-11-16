@@ -6,6 +6,9 @@ class CrawlWikipediaJob < BaseJob
 
   def perform(keyword_id, csv_upload_id)
     keyword = Keyword.find(keyword_id)
+
+    return if keyword.nil?
+
     update_keyword_status(keyword, Keyword::STATUSES[:processing])
     crawl_and_save_results(keyword)
     update_keyword_status(keyword, Keyword::STATUSES[:successful])
@@ -70,7 +73,7 @@ class CrawlWikipediaJob < BaseJob
   end
 
   def handle_error(keyword, error)
-    keyword.failed!
+    update_keyword_status(keyword, Keyword::STATUSES[:failed])
     keyword.update(error_message: error.message)
 
     Rails.logger.error("CrawlWikipediaJob failed for keyword #{keyword.id}: #{error.message}")
