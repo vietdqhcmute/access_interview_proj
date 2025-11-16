@@ -74,7 +74,7 @@ export default function KeywordDetail() {
             </Col>
           </Row>
 
-          <ErrorRow label="Error Message" value={keywordDetailData?.errorMessage || 'N/A'} />
+          {keywordDetailData?.errorMessage && <ErrorRow label="Error Message" value={keywordDetailData?.errorMessage} />}
           <InfoRow label="Total Results" value={searchResult?.totalResults || 'N/A'} />
           <InfoRow label="Total Link in the Page" value={searchResult?.totalLinks || 'N/A'} />
           <InfoRow label="Total Results with Thumbnails" value={searchResult?.resultsWithThumbnails || 'N/A'} />
