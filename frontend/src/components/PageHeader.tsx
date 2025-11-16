@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Layout, Avatar, Dropdown, type MenuProps } from 'antd';
 import { ArrowLeftOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import useAuth from '../context/Auth/useAuthContext';
+import useLogoutMutate from '../hooks/auth/useLogoutMutate';
 
 const { Header } = Layout;
 
@@ -13,8 +14,9 @@ interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = (props) => {
   const { title, backLink } = props;
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const logoutMutation = useLogoutMutate();
 
 
   const getAvatarContent = () => {
@@ -25,8 +27,7 @@ const PageHeader: React.FC<PageHeaderProps> = (props) => {
   };
 
   const handleLogout = () => {
-    logout();
-    navigate('/login');
+    logoutMutation.mutate();
   };
 
   const userMenuItems: MenuProps['items'] = [

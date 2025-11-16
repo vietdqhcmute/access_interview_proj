@@ -313,7 +313,12 @@ Devise.setup do |config|
 
   # ==> Configuration for JWT
   config.jwt do |jwt|
-    jwt.secret = ENV['DEVISE_JWT_SECRET_KEY'] || Rails.application.credentials.dig(:devise_jwt_secret_key) || '13b7bc0d31b897a98ae3fadfdd1dab7201553716f6375d08f5d3596e5e74039a6deeb1f1a79db1019d2714cbf4f14305e291526c049718a5e1d400d000888794'
+    jwt.secret = ENV['DEVISE_JWT_SECRET_KEY']
+
+    if jwt.secret.blank?
+      raise "DEVISE_JWT_SECRET_KEY environment variable is not set. Please add it to your .env file. Generate one with: rails secret"
+    end
+
     jwt.dispatch_requests = [
       ['POST', %r{^/login$}]
     ]

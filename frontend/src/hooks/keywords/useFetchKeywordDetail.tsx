@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axiosInstance from "../../lib/axios";
 
 const useFetchKeywordDetail = (id: string) => {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ['keywordDetail', id],
     queryFn: async () => {
-      const response = await axios.get(`/api/keywords/${id}`);
+      const response = await axiosInstance.get(`/keywords/${id}`);
       return response.data;
     }
   });
