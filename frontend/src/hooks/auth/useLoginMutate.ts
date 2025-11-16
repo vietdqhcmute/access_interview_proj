@@ -4,8 +4,10 @@ import type { AxiosResponse } from 'axios';
 import axios from '../../lib/axios';
 
 interface LoginCredentials {
-  email: string;
-  password: string;
+  user: {
+    email: string;
+    password: string;
+  }
 }
 
 interface LoginResponse {

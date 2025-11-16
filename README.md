@@ -27,7 +27,23 @@ cd access_interview_proj
 
 ### 2. Configure environment variables
 
-Docker Compose will automatically use your system's UID and GID to avoid file permission issues.
+**Create your `.env` file:**
+```sh
+cp .env.example .env
+```
+
+**Generate a JWT secret key:**
+```sh
+# After starting containers, generate a secure JWT secret
+docker compose exec web rails secret
+
+# Copy the output and add it to your .env file:
+# DEVISE_JWT_SECRET_KEY=<paste_the_generated_secret_here>
+```
+
+**Configure User ID and Group ID (for file permissions):**
+
+Docker Compose will use your system's UID and GID to avoid file permission issues.
 
 **Linux/macOS:**
 ```sh
@@ -39,12 +55,14 @@ echo $GID  # Should output your group ID (e.g., 1000)
 
 **Note:** On most Linux/macOS systems, `$UID` and `$GID` are automatically set by your shell. The containers will run with these IDs to ensure files created inside the container have the correct ownership on your host machine.
 
-**If you encounter permission issues**, create a `.env` file:
+**If you encounter permission issues**, edit the `.env` file:
 ```sh
-cp .env.example .env
-# The .env file will use UID=1000 and GID=1000 by default
-# Edit if your IDs are different: UID=$(id -u) GID=$(id -g)
+# Update UID and GID if your IDs are different from 1000:
+UID=$(id -u)
+GID=$(id -g)
 ```
+
+**IMPORTANT:** Never commit the `.env` file to version control! It contains secrets.
 
 ### 3. Build and run with Docker
 

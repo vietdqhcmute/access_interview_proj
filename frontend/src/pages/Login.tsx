@@ -30,7 +30,7 @@ export default function Login() {
 
   const onFinish = (values: LoginFormValues) => {
     try {
-      loginMutate.mutate(values);
+      loginMutate.mutate({ user: values });
     } catch (error) {
       console.error('Login failed:', error);
     }
