@@ -13,7 +13,10 @@ const WithAuth: React.FC<WithAuthProps> = ({ children }) => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/', { replace: true });
+      const userInLocalStorage = localStorage.getItem('auth_user'); // Check localStorage if user reload page and cache auth data is not loaded yet
+      if (!userInLocalStorage) {
+        navigate('/', { replace: true });
+      }
     }
   }, [user, navigate]);
 
