@@ -19,7 +19,7 @@ module CsvUploadHelper
   def get_csv_list_from_upload(csv_upload)
     csv_text = csv_upload.read
     csv = CSV.parse(csv_text, headers: true)
-    csv_keyword_list = csv.to_a.flatten
+    csv_keyword_list = csv.to_a.flatten.compact.uniq
     csv_keyword_list
   end
 end
