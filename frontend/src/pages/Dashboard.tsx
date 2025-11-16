@@ -1,20 +1,18 @@
 import { Layout, Button, Tabs, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import useAuth from "../context/Auth/useAuthContext";
 import useFetchCsvUpload from '../hooks/csv_dashboard/useFetchCsvUpload';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
 import type { FixMeLater } from '../utils/types';
 import { useMemo } from 'react';
 import CsvUploadList from '../components/csv-upload-list/CsvUploadList';
 import PageHeader from '../components/PageHeader';
+import useNotification from '../context/Notification/useNotification';
 
-const {  Content } = Layout;
+const { Content } = Layout;
 
 export default function Dashboard() {
-  const { user } = useAuth();
   const { data: csvData } = useFetchCsvUpload();
-
-  console.log('Current user:', user);
+  const { notifySuccess, notifyError } = useNotification();
 
   const inProgressItems = useMemo(() =>
     csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.PROCESSING) || [],
@@ -75,8 +73,10 @@ export default function Dashboard() {
     },
     onChange(info: any) {
       if (info.file.status === 'done') {
+        notifySuccess(`${info.file.name} file uploaded successfully`);
         console.log(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
+        notifyError(`${info.file.name} file upload failed.`);
         console.error(`${info.file.name} file upload failed.`);
       }
     },
@@ -96,7 +96,6 @@ export default function Dashboard() {
               Add CSV
             </Button>
           </Upload>
-
         </div>
         <div style={{
           background: '#fff',

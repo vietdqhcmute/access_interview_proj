@@ -1,10 +1,10 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ConfigProvider, Layout } from 'antd';
-import useCustomNotification from './hooks/auth/useCustomNotification';
 import AuthProvider from './context/Auth/AuthProvider';
 import WithAuth from './components/WithAuth';
 import WithoutAuth from './components/WithoutAuth';
+import NotificationProvider from './context/Notification/NotificationProvider';
 
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
@@ -33,14 +33,14 @@ function StaticPages() {
 }
 
 function App() {
-  const { contextHolder } = useCustomNotification();
 
   return (
     <div className="App">
       <AuthProvider>
         <ConfigProvider>
-          {contextHolder}
-          <StaticPages />
+          <NotificationProvider>
+            <StaticPages />
+          </NotificationProvider>
         </ConfigProvider>
       </AuthProvider>
     </div>

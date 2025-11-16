@@ -1,4 +1,6 @@
 import { notification } from "antd";
+const PLACEMENT = 'bottomRight';
+const DURATION = 1;
 
 const useCustomNotification = () => {
     const [api, contextHolder] = notification.useNotification();
@@ -7,6 +9,8 @@ const useCustomNotification = () => {
         api.success({
             message: 'Successful!',
             description,
+            placement: PLACEMENT,
+            duration: DURATION,
         });
     };
 
@@ -14,6 +18,8 @@ const useCustomNotification = () => {
         api.error({
             message: 'Error!',
             description,
+            placement: PLACEMENT,
+            duration: DURATION,
         });
     };
 
