@@ -41,4 +41,10 @@ class CsvUploadController < ApplicationController
     csv_upload = current_user.csv_uploads.find(params[:id])
     render json: CsvUploadDetailSerializer.new(csv_upload).serializable_hash, status: :ok
   end
+
+  def destroy
+    csv_upload = current_user.csv_uploads.find(params[:id])
+    csv_upload.destroy
+    render json: { message: 'CSV upload and associated keywords deleted successfully.' }, status: :ok
+  end
 end

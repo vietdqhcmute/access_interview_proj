@@ -7,7 +7,8 @@ const useFetchKeywordDetail = (id: string) => {
     queryFn: async () => {
       const response = await axiosInstance.get(`/keywords/${id}`);
       return response.data;
-    }
+    },
+    refetchInterval: 5000, // Poll every 5 seconds
   });
 
   return {
