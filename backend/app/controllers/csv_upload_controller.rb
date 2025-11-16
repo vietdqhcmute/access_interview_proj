@@ -28,7 +28,7 @@ class CsvUploadController < ApplicationController
   end
 
   def index
-    csv_uploads = current_user.csv_uploads
+    csv_uploads = current_user.csv_uploads.order(created_at: :desc)
     render json: CsvUploadSerializer.new(csv_uploads).serializable_hash, status: :ok
   end
 

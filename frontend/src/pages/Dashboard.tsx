@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import CsvUploadList from '../components/csv-upload-list/CsvUploadList';
 import PageHeader from '../components/PageHeader';
 import useNotification from '../context/Notification/useNotification';
+import { countCsvKeyword, readTextFromFile } from '../utils/handlers';
 
 const { Content } = Layout;
 
@@ -63,6 +64,26 @@ export default function Dashboard() {
     },
   ];
 
+  const validateCsvFile = (file: File) => {
+    const isCsv = file.type === 'text/csv' || file.name.endsWith('.csv');
+    if (!isCsv) {
+      notifyError('You can only upload CSV files!');
+    } else {
+      readTextFromFile(file).then((text) => {
+        const rowCount = countCsvKeyword(text);
+        if (rowCount > 100) {
+          notifyError('The CSV file must not contain more than 100 keywords.');
+          return false;
+        }
+      }).catch((error) => {
+        notifyError('Failed to read the CSV file.');
+        console.error('Error reading CSV file:', error);
+      });
+    }
+
+    return isCsv;
+  }
+
   const uploadProps = {
     name: 'file',
     accept: '.csv',
@@ -70,6 +91,9 @@ export default function Dashboard() {
     action: '/api/csv_upload',
     headers: {
       authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+    beforeUpload(file: File) {
+      return validateCsvFile(file);
     },
     onChange(info: any) {
       if (info.file.status === 'done') {
@@ -80,6 +104,7 @@ export default function Dashboard() {
         console.error(`${info.file.name} file upload failed.`);
       }
     },
+
   };
 
   return (

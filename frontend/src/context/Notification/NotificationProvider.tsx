@@ -6,7 +6,7 @@ interface NotificationProviderProps {
   children: ReactNode;
 }
 const PLACEMENT = 'bottomRight';
-const DURATION = 1;
+const DURATION = 2;
 
 const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
   const [api, contextHolder] = notification.useNotification();

@@ -2,7 +2,6 @@ import { Form, Input, Button, Card, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import useLoginMutate from '../hooks/auth/useLoginMutate';
-import useCustomNotification from '../hooks/auth/useCustomNotification';
 import useAuth from '../context/Auth/useAuthContext';
 import { useEffect } from 'react';
 
@@ -14,7 +13,6 @@ interface LoginFormValues {
 }
 
 export default function Login() {
-  const { contextHolder, notifySuccess } = useCustomNotification();
   const navigate = useNavigate();
   const { login: saveAuthDataOnBrowser } = useAuth();
   const [form] = Form.useForm();
@@ -22,7 +20,6 @@ export default function Login() {
   const loginSuccessCallback = (data: any, token: string) => {
     const { data: userData } = data;
     saveAuthDataOnBrowser(userData, token);
-    notifySuccess('Login successful!');
     navigate('/dashboard');
   }
 
@@ -52,7 +49,6 @@ export default function Login() {
 
   return (
     <>
-      {contextHolder}
       <div style={{
         display: 'flex',
         justifyContent: 'center',
