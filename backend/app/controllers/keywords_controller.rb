@@ -2,7 +2,7 @@ class KeywordsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    keywords = Keyword.where(csv_upload_id: params[:csv_upload_id])
+    keywords = Keyword.where(csv_upload_id: params[:csv_upload_id]).order(created_at: :desc)
     render json: KeywordSerializer.new(keywords).serializable_hash, status: :ok
   end
 

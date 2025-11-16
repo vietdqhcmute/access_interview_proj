@@ -15,6 +15,11 @@ class CsvUploadController < ApplicationController
       csv_file_name = params[:file].original_filename
       csv_keyword_list = get_csv_list_from_upload(params[:file])
 
+      if csv_keyword_list.size > 100
+        render json: { error: 'CSV file contains more than 100 keywords. Maximum allowed is 100.' }, status: :unprocessable_entity
+        return
+      end
+
       csv_upload = create_csv_record(current_user, csv_file_name, csv_keyword_list.size)
       csv_keyword_list.each do |keyword|
         new_keyword_record = create_keyword_record(keyword, csv_upload)
@@ -28,7 +33,7 @@ class CsvUploadController < ApplicationController
   end
 
   def index
-    csv_uploads = current_user.csv_uploads
+    csv_uploads = current_user.csv_uploads.order(created_at: :desc)
     render json: CsvUploadSerializer.new(csv_uploads).serializable_hash, status: :ok
   end
 

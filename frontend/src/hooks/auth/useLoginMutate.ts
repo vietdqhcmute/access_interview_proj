@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { message } from 'antd';
 import type { AxiosResponse } from 'axios';
 import axios from '../../lib/axios';
+import useNotification from '../../context/Notification/useNotification';
 
 interface LoginCredentials {
   user: {
@@ -33,15 +34,18 @@ const getTokenFromResponse = (response: AxiosResponse<LoginResponse>): string =>
 }
 
 const useLoginMutate = (successCallback: (data: LoginResponse, token: string) => void) => {
+  const { notifySuccess, notifyError } = useNotification();
+
   return useMutation({
     mutationFn: loginRequest,
     onSuccess: (response) => {
       const token = getTokenFromResponse(response);
       successCallback(response.data, token);
+      notifySuccess('Logged in successfully.');
     },
     onError: (error: any) => {
       const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
-      message.error(errorMessage);
+      notifyError(errorMessage);
     },
   });
 };
