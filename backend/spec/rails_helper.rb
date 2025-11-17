@@ -56,6 +56,9 @@ RSpec.configure do |config|
   end
 end
 
+# ActiveJob test adapter
+ActiveJob::Base.queue_adapter = :test
+
 # Shoulda Matchers configuration
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|

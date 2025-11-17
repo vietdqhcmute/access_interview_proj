@@ -59,10 +59,16 @@ class CrawlWikipediaJob < BaseJob
 
   def update_csv_upload_status(csv_upload_id)
     csv_upload = CsvUpload.find(csv_upload_id)
-    processed_count = csv_upload.processed_keywords.to_i + 1
+    csv_total_keyword = csv_upload.total_keyword
+    keywords = csv_upload.keywords
+    success_search_result_size = keywords.where(status: Keyword::STATUSES[:successful]).size
+    failed_search_result_size = keywords.where(status: Keyword::STATUSES[:failed]).size
+    processed_count = success_search_result_size + failed_search_result_size
     status =
       if processed_count >= csv_upload.total_keyword
         CsvUpload::STATUSES[:successful]
+      elsif processed_count == 0
+        CsvUpload::STATUSES[:failed]
       else
         CsvUpload::STATUSES[:processing]
       end

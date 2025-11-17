@@ -17,7 +17,8 @@ RSpec.describe User, type: :model do
 
   describe 'creating a user' do
     it 'creates a valid user' do
-      user = User.create(name: 'John Doe', email: 'john@example.com')
+      params = { name: 'John Doe', email: 'john@example.com', password: 'password123'}
+      user = User.create(params)
       expect(user).to be_valid
       expect(user.persisted?).to be true
     end
