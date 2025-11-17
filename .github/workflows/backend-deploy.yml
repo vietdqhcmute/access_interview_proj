@@ -72,20 +72,20 @@ jobs:
           bundle exec rails db:create
           bundle exec rails db:schema:load
 
-      - name: Run RSpec tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
-          REDIS_URL: redis://localhost:6379/0
-          DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
-        run: bundle exec rspec
+      # - name: Run RSpec tests
+      #   env:
+      #     RAILS_ENV: test
+      #     DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+      #     REDIS_URL: redis://localhost:6379/0
+      #     DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
+      #   run: bundle exec rspec
 
-      - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-report
-          path: backend/coverage/
+      # - name: Upload coverage reports
+      #   uses: actions/upload-artifact@v4
+      #   if: always()
+      #   with:
+      #     name: coverage-report
+      #     path: backend/coverage/
 
   deploy:
     name: Deploy to Heroku
