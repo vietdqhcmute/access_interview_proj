@@ -62,7 +62,7 @@ class CrawlWikipediaJob < BaseJob
     processed_count = csv_upload.processed_keywords.to_i + 1
     status =
       if processed_count >= csv_upload.total_keyword
-        CsvUpload::STATUSES[:completed]
+        CsvUpload::STATUSES[:successful]
       else
         CsvUpload::STATUSES[:processing]
       end
