@@ -7,8 +7,9 @@ class CleanupFalseCrawlingProgressWorker
     in_progress_csv_uploads.each do |csv_upload|
       total_keywords = csv_upload.total_keyword
       successful_keywords_size = csv_upload.keywords.where(status: Keyword::STATUSES[:successful]).size
-      if (total_keywords == successful_keywords_size)
-        csv_upload.update(status: CsvUpload::STATUSES[:successful], processed_keywords: successful_keywords_size)
+      failed_keywords_size = csv_upload.keywords.where(status: Keyword::STATUSES[:failed]).size
+      if (total_keywords == successful_keywords_size + failed_keywords_size)
+        csv_upload.update(status: CsvUpload::STATUSES[:successful], processed_keywords: successful_keywords_size + failed_keywords_size)
       end
     end
     Rails.logger.info "Falsy data cleaned at #{Time.current}"
