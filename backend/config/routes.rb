@@ -26,6 +26,6 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   resources :users, only: [:create, :show, :index]
-  resources :csv_upload, only: [:create, :index, :show]
+  resources :csv_upload, only: [:create, :index, :show, :destroy]
   resources :keywords, only: [:index, :show]
 end

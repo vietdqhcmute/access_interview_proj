@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
-import { Layout, Tabs, Card, Row, Col, Statistic, Tag, Progress } from 'antd';
-import { FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { Layout, Tabs, Card, Row, Col, Statistic, Tag, Progress, Input } from 'antd';
+import { FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import useFetchCsvUploadDetail from '../hooks/csv_dashboard/useFetchCsvUploadDetail';
 import PageHeader from '../components/PageHeader';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import KeyWordList from '../components/keyword-list/KeyWordList';
 import { getStatusLabel } from '../utils/handlers';
 
@@ -15,17 +15,27 @@ export default function UploadDetail() {
   const { data } = useFetchCsvUploadDetail(Number(id));
   const csvDetailData = data?.data?.attributes || {};
   const keywords = csvDetailData?.keywords || [];
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredKeywords = useMemo(() => {
+    return searchTerm === '' ? keywords : keywords.filter((kw: any) =>
+      kw.term?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  },
+    [keywords, searchTerm]
+  );
+
   const inProgressKeywords = useMemo(() =>
-    keywords.filter((kw: any) => kw.status === PROCESS_STATUS.PROCESSING),
-    [keywords]
+    filteredKeywords.filter((kw: any) => kw.status === PROCESS_STATUS.PROCESSING),
+    [filteredKeywords]
   );
   const completedKeywords = useMemo(() =>
-    keywords.filter((kw: any) => kw.status === PROCESS_STATUS.SUCCESSFULL),
-    [keywords]
+    filteredKeywords.filter((kw: any) => kw.status === PROCESS_STATUS.SUCCESSFULL),
+    [filteredKeywords]
   );
   const failedKeywords = useMemo(() =>
-    keywords.filter((kw: any) => kw.status === PROCESS_STATUS.FAILED),
-    [keywords]
+    filteredKeywords.filter((kw: any) => kw.status === PROCESS_STATUS.FAILED),
+    [filteredKeywords]
   );
 
   const getProgress = () => {
@@ -40,7 +50,7 @@ export default function UploadDetail() {
       label: 'All Keywords',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList uploadId={Number(id)} data={keywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={filteredKeywords} loading={false} />
         </div>
       ),
     },
@@ -67,7 +77,7 @@ export default function UploadDetail() {
       label: 'Failed',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList data={failedKeywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={failedKeywords} loading={false} />
         </div>
       ),
     },
@@ -145,6 +155,14 @@ export default function UploadDetail() {
           borderRadius: '8px',
           boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
         }}>
+          <Input
+            placeholder="Search keywords..."
+            prefix={<SearchOutlined />}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ marginBottom: '16px' }}
+            allowClear
+          />
           <Tabs defaultActiveKey="all" items={tabItems} />
         </div>
       </Content>

@@ -11,6 +11,16 @@ interface InfoRowProps {
   value: string | number;
 }
 
+const ErrorRow: React.FC<InfoRowProps> = ({ label, value }) => (
+  <Row style={{ marginTop: '16px' }}>
+    <Col span={24}>
+      <div style={{ color: 'red' }}>
+        <strong>{label}:</strong> {value}
+      </div>
+    </Col>
+  </Row>
+);
+
 const InfoRow: React.FC<InfoRowProps> = ({ label, value }) => (
   <Row style={{ marginTop: '16px' }}>
     <Col span={24}>
@@ -64,7 +74,7 @@ export default function KeywordDetail() {
             </Col>
           </Row>
 
-
+          {keywordDetailData?.errorMessage && <ErrorRow label="Error Message" value={keywordDetailData?.errorMessage} />}
           <InfoRow label="Total Results" value={searchResult?.totalResults || 'N/A'} />
           <InfoRow label="Total Link in the Page" value={searchResult?.totalLinks || 'N/A'} />
           <InfoRow label="Total Results with Thumbnails" value={searchResult?.resultsWithThumbnails || 'N/A'} />

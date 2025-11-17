@@ -1,20 +1,19 @@
 import { Layout, Button, Tabs, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import useAuth from "../context/Auth/useAuthContext";
 import useFetchCsvUpload from '../hooks/csv_dashboard/useFetchCsvUpload';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
 import type { FixMeLater } from '../utils/types';
 import { useMemo } from 'react';
 import CsvUploadList from '../components/csv-upload-list/CsvUploadList';
 import PageHeader from '../components/PageHeader';
+import useNotification from '../context/Notification/useNotification';
+import { countCsvKeyword, readTextFromFile } from '../utils/handlers';
 
-const {  Content } = Layout;
+const { Content } = Layout;
 
 export default function Dashboard() {
-  const { user } = useAuth();
   const { data: csvData } = useFetchCsvUpload();
-
-  console.log('Current user:', user);
+  const { notifySuccess, notifyError } = useNotification();
 
   const inProgressItems = useMemo(() =>
     csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.PROCESSING) || [],
@@ -65,21 +64,47 @@ export default function Dashboard() {
     },
   ];
 
+  const validateCsvFile = (file: File) => {
+    const isCsv = file.type === 'text/csv' || file.name.endsWith('.csv');
+    if (!isCsv) {
+      notifyError('You can only upload CSV files!');
+    } else {
+      readTextFromFile(file).then((text) => {
+        const rowCount = countCsvKeyword(text);
+        if (rowCount > 100) {
+          notifyError('The CSV file must not contain more than 100 keywords.');
+          return false;
+        }
+      }).catch((error) => {
+        notifyError('Failed to read the CSV file.');
+        console.error('Error reading CSV file:', error);
+      });
+    }
+
+    return isCsv;
+  }
+
   const uploadProps = {
     name: 'file',
     accept: '.csv',
     showUploadList: false,
-    action: '/api/csv_upload', // Replace with your actual upload URL
+    action: '/api/csv_upload',
     headers: {
       authorization: `Bearer ${localStorage.getItem('token')}`,
     },
+    beforeUpload(file: File) {
+      return validateCsvFile(file);
+    },
     onChange(info: any) {
       if (info.file.status === 'done') {
+        notifySuccess(`${info.file.name} file uploaded successfully`);
         console.log(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
+        notifyError(`${info.file.name} file upload failed.`);
         console.error(`${info.file.name} file upload failed.`);
       }
     },
+
   };
 
   return (
@@ -96,7 +121,6 @@ export default function Dashboard() {
               Add CSV
             </Button>
           </Upload>
-
         </div>
         <div style={{
           background: '#fff',

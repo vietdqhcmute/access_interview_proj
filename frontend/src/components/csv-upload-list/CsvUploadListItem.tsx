@@ -1,8 +1,9 @@
 import React from 'react';
-import { List, Typography, Tag, Progress } from 'antd';
-import { FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { List, Typography, Tag, Progress, Button, Popconfirm } from 'antd';
+import { FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { FAILED, PROCESS_STATUS, PROCESSING, SUCCESSFULL } from '../../constants/dashboard-constants';
+import useDeleteCsvUploadMutate from '../../hooks/csv_dashboard/useDeleteCsvUploadMutate';
 
 const { Text } = Typography;
 
@@ -18,9 +19,12 @@ interface CsvUploadItem {
 
 interface CsvUploadListItemProps {
   item: CsvUploadItem;
+  onDelete?: (id: number) => void;
 }
 
 const CsvUploadListItem: React.FC<CsvUploadListItemProps> = ({ item }) => {
+  const deleteMutation = useDeleteCsvUploadMutate(item.id);
+
   const getStatusTag = (status: string) => {
     const statusConfig = {
       [PROCESS_STATUS.PROCESSING]: { color: 'processing', icon: <ClockCircleOutlined />, text: 'Processing' },
@@ -42,12 +46,35 @@ const CsvUploadListItem: React.FC<CsvUploadListItemProps> = ({ item }) => {
     return Math.round((item.processedKeywords / item.totalKeyword) * 100);
   };
 
+  const handleDelete = () => {
+    deleteMutation.mutate();
+  };
+
   return (
     <List.Item
       actions={[
         <Text type="secondary" key="date">
-          {new Date(item.createdAt).toLocaleDateString()}
-        </Text>
+          {new Date(item.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })}
+        </Text>,
+        <Popconfirm
+          key="delete"
+          title="Delete this upload?"
+          description="Are you sure you want to delete this CSV upload? This action cannot be undone."
+          onConfirm={handleDelete}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            size="small"
+          />
+        </Popconfirm>
       ]}
     >
       <List.Item.Meta
