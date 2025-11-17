@@ -7,12 +7,14 @@ import CsvUploadList from '../components/csv-upload-list/CsvUploadList';
 import PageHeader from '../components/PageHeader';
 import useNotification from '../context/Notification/useNotification';
 import { countCsvKeyword, readTextFromFile } from '../utils/handlers';
+import useAuth from '../context/Auth/useAuthContext';
 
 const { Content } = Layout;
 
 const UPLOAD_API_DOMAIN = import.meta.env.VITE_API_URL || '/api/';
 
 export default function Dashboard() {
+  const { token } = useAuth();
   const { data: csvData } = useFetchCsvUpload();
   const { notifySuccess, notifyError } = useNotification();
 
@@ -91,7 +93,7 @@ export default function Dashboard() {
     showUploadList: false,
     action: `${UPLOAD_API_DOMAIN}csv_upload`,
     headers: {
-      authorization: `Bearer ${localStorage.getItem('token')}`,
+      authorization: `Bearer ${token}`,
     },
     beforeUpload(file: File) {
       return validateCsvFile(file);
