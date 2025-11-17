@@ -2,7 +2,6 @@ import { Layout, Button, Tabs, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import useFetchCsvUpload from '../hooks/csv_dashboard/useFetchCsvUpload';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
-import type { FixMeLater } from '../utils/types';
 import { useMemo } from 'react';
 import CsvUploadList from '../components/csv-upload-list/CsvUploadList';
 import PageHeader from '../components/PageHeader';
@@ -15,18 +14,18 @@ export default function Dashboard() {
   const { data: csvData } = useFetchCsvUpload();
   const { notifySuccess, notifyError } = useNotification();
 
-  const inProgressItems = useMemo(() =>
-    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.PROCESSING) || [],
+  const inProgressUploads = useMemo(() =>
+    csvData?.data?.map((item) => item.attributes).filter((item) => item.status === PROCESS_STATUS.PROCESSING) || [],
     [csvData]
   );
 
-  const doneItems = useMemo(() =>
-    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.SUCCESSFULL) || [],
+  const completedUploads = useMemo(() =>
+    csvData?.data?.map((item) => item.attributes).filter((item) => item.status === PROCESS_STATUS.SUCCESSFULL) || [],
     [csvData]
   );
 
-  const failedItems = useMemo(() =>
-    csvData?.data?.map(item => item.attributes).filter((item: FixMeLater) => item.status === PROCESS_STATUS.FAILED) || [],
+  const failedUploads = useMemo(() =>
+    csvData?.data?.map((item) => item.attributes).filter((item) => item.status === PROCESS_STATUS.FAILED) || [],
     [csvData]
   );
 
@@ -40,7 +39,7 @@ export default function Dashboard() {
       label: 'Done',
       children: (
         <div style={{ padding: '24px' }}>
-          <CsvUploadList data={doneItems} loading={false} />
+          <CsvUploadList data={completedUploads} loading={false} />
         </div>
       ),
     },
@@ -49,7 +48,7 @@ export default function Dashboard() {
       label: 'In Progress',
       children: (
         <div style={{ padding: '24px' }}>
-          <CsvUploadList data={inProgressItems} loading={false} />
+          <CsvUploadList data={inProgressUploads} loading={false} />
         </div>
       ),
     },
@@ -58,7 +57,7 @@ export default function Dashboard() {
       label: 'Failed',
       children: (
         <div style={{ padding: '24px' }}>
-          <CsvUploadList data={failedItems} loading={false} />
+          <CsvUploadList data={failedUploads} loading={false} />
         </div>
       ),
     },
@@ -95,7 +94,7 @@ export default function Dashboard() {
     beforeUpload(file: File) {
       return validateCsvFile(file);
     },
-    onChange(info: any) {
+    onChange(info: { file: { status?: string; name: string } }) {
       if (info.file.status === 'done') {
         notifySuccess(`${info.file.name} file uploaded successfully`);
         console.log(`${info.file.name} file uploaded successfully`);

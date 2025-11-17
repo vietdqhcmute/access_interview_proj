@@ -11,14 +11,20 @@ interface RegistrationCredentials {
 }
 
 interface RegistrationResponse {
-  id: string;
-  email: string;
-  name?: string;
+  data: {
+    id: string;
+    email: string;
+    name?: string;
+  };
+  status: {
+    code: number;
+    message: string;
+  };
 }
 
 const registrationRequest = async (params: RegistrationCredentials): Promise<RegistrationResponse> => {
-  const { data } = await axios.post('/signup', params);
-  return data;
+  const response = await axios.post('/signup', params);
+  return response.data;
 };
 
 const useRegistrationMutate = (successCallback: (data: RegistrationResponse) => void, errorCallback: (error: any) => void) => {

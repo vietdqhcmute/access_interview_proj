@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { Layout, Tabs, Card, Row, Col, Statistic, Tag, Progress, Input } from 'antd';
-import { FileTextOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { Layout, Tabs, Card, Row, Col, Statistic, Progress, Input } from 'antd';
+import { FileTextOutlined, SearchOutlined } from '@ant-design/icons';
 import useFetchCsvUploadDetail from '../hooks/csv_dashboard/useFetchCsvUploadDetail';
 import PageHeader from '../components/PageHeader';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';

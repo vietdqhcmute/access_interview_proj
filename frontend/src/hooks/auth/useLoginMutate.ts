@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import { message } from 'antd';
 import type { AxiosResponse } from 'axios';
 import axios from '../../lib/axios';
 import useNotification from '../../context/Notification/useNotification';

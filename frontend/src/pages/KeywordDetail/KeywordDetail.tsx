@@ -33,7 +33,7 @@ const InfoRow: React.FC<InfoRowProps> = ({ label, value }) => (
 
 export default function KeywordDetail() {
   const { id, uploadId } = useParams();
-  const { data, error, isLoading } = useFetchKeywordDetail(id || '');
+  const { data } = useFetchKeywordDetail(id || '');
   const keywordDetailData = data?.data?.attributes || {};
   const searchResult = keywordDetailData?.searchResult || {};
 
