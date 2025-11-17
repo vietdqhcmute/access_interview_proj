@@ -13,6 +13,7 @@ Rails.application.config.hosts.clear
 require 'database_cleaner/active_record'
 require 'shoulda/matchers'
 require 'factory_bot_rails'
+require 'faker'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories.
