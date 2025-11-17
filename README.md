@@ -5,6 +5,7 @@ A full-stack web application for managing CSV keyword uploads and Wikipedia data
 ## 🌐 Live Demo
 
 **Frontend:** https://access-interview-proj.vercel.app/
+
 **Backend API:** https://access-interview-backend-d4700e4f289a.herokuapp.com/
 
 ## 📋 Prerequisites
@@ -168,10 +169,6 @@ The project uses GitHub Actions for continuous integration and deployment:
 - Database data persists in Docker volumes
 - PostgreSQL runs on port 5432 (configurable)
 - Frontend development server runs on port 5173
-
-## 📄 License
-
-[Your License Here]
 - `Dockerfile` - Multi-stage Dockerfile for both backend and frontend
 - `docker-compose.yml` - Docker Compose configuration
 
