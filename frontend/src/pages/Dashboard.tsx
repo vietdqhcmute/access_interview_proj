@@ -10,6 +10,8 @@ import { countCsvKeyword, readTextFromFile } from '../utils/handlers';
 
 const { Content } = Layout;
 
+const UPLOAD_API_DOMAIN = import.meta.env.VITE_API_URL || '/api';
+
 export default function Dashboard() {
   const { data: csvData } = useFetchCsvUpload();
   const { notifySuccess, notifyError } = useNotification();
@@ -87,7 +89,7 @@ export default function Dashboard() {
     name: 'file',
     accept: '.csv',
     showUploadList: false,
-    action: '/api/csv_upload',
+    action: `${UPLOAD_API_DOMAIN}/csv_upload`,
     headers: {
       authorization: `Bearer ${localStorage.getItem('token')}`,
     },

@@ -1,120 +1,174 @@
-# access_interview_proj
+# Access Interview Project
 
-## Demo
+A full-stack web application for managing CSV keyword uploads and Wikipedia data crawling with background job processing.
 
-Visit the live demo: **https://access-interview-proj.vercel.app/**
+## 🌐 Live Demo
 
-## Prerequisites
+**Frontend:** https://access-interview-proj.vercel.app/
 
-- Docker and Docker Compose
-- Node.js 20.19.0 (if running outside Docker)
+**Backend API:** https://access-interview-backend-d4700e4f289a.herokuapp.com/
 
-## Node version
+## 📋 Prerequisites
 
-This project uses Node.js 20.19.0. If you use nvm, run:
+Before you begin, ensure you have the following installed on your machine:
 
-```sh
-nvm install 20.19.0
-nvm use 20.19.0
+- **Docker Desktop** (v20.10 or higher)
+- **Docker Compose** (v2.0 or higher)
+- **Git**
+
+**Optional (for running outside Docker):**
+- Node.js 20.19.0
+- Ruby 3.3.10
+- PostgreSQL 16
+- Redis 7
+
+## 🔧 Environment Variables
+
+The project requires the following environment variables to be configured:
+
+### Backend Environment Variables
+```bash
+# Database Configuration
+DATABASE_HOST=db
+DATABASE_USER=postgres
+DATABASE_PASSWORD=your_secure_password
+DATABASE_NAME=app_development
+
+# Redis Configuration
+REDIS_URL=redis://redis:6379/0
+
+# JWT Secret (generate with: docker compose exec web rails secret)
+DEVISE_JWT_SECRET_KEY=your_generated_secret_key_here
+
+# Optional: User ID for file permissions
+UID=1000
+GID=1000
 ```
 
-The file `.nvmrc` at the repository root pins the version for `nvm`.
+### Frontend Environment Variables
+```bash
+# Development (uses Vite proxy)
+VITE_API_URL=/api/
 
-## Setup on a new machine
+# Production
+VITE_API_URL=https://access-interview-backend-d4700e4f289a.herokuapp.com/
+```
 
-### 1. Clone the repository
+## 🚀 Getting Started
 
-```sh
-git clone <repository-url>
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/vietdqhcmute/access_interview_proj.git
 cd access_interview_proj
 ```
 
-### 2. Configure environment variables
+### 2. Set Up Environment Variables
 
-**Create your `.env` file:**
-```sh
+```bash
+# Copy the example environment file
 cp .env.example .env
+
+# Edit .env and configure your variables
+# At minimum, set a secure DATABASE_PASSWORD
 ```
 
-**Generate a JWT secret key:**
-```sh
-# After starting containers, generate a secure JWT secret
+### 3. Generate JWT Secret Key
+
+After starting the containers (step 4), generate a secure JWT secret:
+
+```bash
+# Generate the secret
 docker compose exec web rails secret
 
-# Copy the output and add it to your .env file:
-# DEVISE_JWT_SECRET_KEY=<paste_the_generated_secret_here>
+# Copy the output and add it to your .env file as DEVISE_JWT_SECRET_KEY
+# Then restart the containers: docker compose restart
 ```
 
-**Configure User ID and Group ID (for file permissions):**
+### 4. Start the Application with Docker Compose
 
-Docker Compose will use your system's UID and GID to avoid file permission issues.
+```bash
+# Build and start all services (database, redis, backend, sidekiq, frontend)
+docker compose up --build
 
-**Linux/macOS:**
-```sh
-# Docker Compose automatically reads $UID and $GID from your shell
-# Verify your IDs:
-echo $UID  # Should output your user ID (e.g., 1000)
-echo $GID  # Should output your group ID (e.g., 1000)
-```
-
-**Note:** On most Linux/macOS systems, `$UID` and `$GID` are automatically set by your shell. The containers will run with these IDs to ensure files created inside the container have the correct ownership on your host machine.
-
-**If you encounter permission issues**, edit the `.env` file:
-```sh
-# Update UID and GID if your IDs are different from 1000:
-UID=$(id -u)
-GID=$(id -g)
-```
-
-**IMPORTANT:** Never commit the `.env` file to version control! It contains secrets.
-
-### 3. Build and run with Docker
-
-```sh
-# Build the containers
-docker-compose build
-
-# Start all services (database, backend, frontend)
-docker-compose up
-
-# Or run in detached mode
-docker-compose up -d
-```
-
-### 4. Access the application
-
-- **Backend (Rails API):** http://localhost:3000
-- **Frontend:** http://localhost:5173
-- **Database:** localhost:3306
-
-### 5. Common commands
-
-```sh
-# Stop all services
-docker-compose down
-
-# Rebuild after Dockerfile changes
-docker-compose build
+# Or run in detached mode (background)
+docker compose up -d --build
 
 # View logs
-docker-compose logs -f
+docker compose logs -f
 
-# Run Rails commands
-docker-compose exec web rails console
-docker-compose exec web rails db:migrate
-
-# Run bundle install if you add gems
-docker-compose exec web bundle install
-
-# Fix file permissions (if needed)
-sudo chown -R $(id -u):$(id -g) backend/
-sudo chown -R $(id -u):$(id -g) frontend/
+# View logs for specific service
+docker compose logs -f web
+docker compose logs -f frontend
 ```
 
-## Project Structure
+### 5. Initialize the Database
 
-- `backend/` - Rails API backend
-- `frontend/` - Frontend application (Vite + pnpm)
+```bash
+# Create database
+docker compose exec web rails db:create
+
+# Run migrations
+docker compose exec web rails db:migrate
+
+# (Optional) Seed initial data
+docker compose exec web rails db:seed
+```
+
+### 6. Access the Application
+
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3000
+- **Sidekiq Web UI:** http://localhost:3000/sidekiq
+- **PostgreSQL:** localhost:5432
+- **Redis:** localhost:6379
+
+## 🏗️ Project Structure
+
+```
+access_interview_proj/
+├── backend/                 # Rails API backend
+│   ├── app/
+│   │   ├── controllers/    # API controllers
+│   │   ├── models/         # ActiveRecord models
+│   │   ├── workers/        # Sidekiq background jobs
+│   │   └── serializers/    # JSON API serializers
+│   ├── config/             # Rails configuration
+│   ├── db/                 # Database migrations and schema
+│   └── spec/               # RSpec tests
+│
+├── frontend/               # React + Vite frontend
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── pages/         # Page components
+│   │   ├── hooks/         # Custom React hooks
+│   │   ├── context/       # React context providers
+│   │   └── lib/           # Utilities and configurations
+│   └── public/            # Static assets
+│
+├── .github/               # GitHub Actions CI/CD workflows
+├── docker-compose.yml     # Docker services configuration
+└── .env.example           # Environment variables template
+```
+
+## 🔄 CI/CD
+
+The project uses GitHub Actions for continuous integration and deployment:
+
+- **Backend:** Automatically deployed to Heroku on push to `master`
+- **Redis:** Setup on Heroku as add-on
+- **PostgreSQL:** Setup on Heroku as add-on
+- **Frontend:** Automatically deployed to Vercel on push to `master`
+
+## 📝 Additional Notes
+
+- The frontend runs with hot-reload enabled in development
+- Backend API uses JWT ONLY (not use Cookie) authentication via Devise
+- Background jobs are processed by Sidekiq with Redis
+- Cron jobs are processed by Sidekiq with Redis
+- Database data persists in Docker volumes
+- PostgreSQL runs on port 5432 (configurable)
+- Frontend development server runs on port 5173
 - `Dockerfile` - Multi-stage Dockerfile for both backend and frontend
 - `docker-compose.yml` - Docker Compose configuration
 
