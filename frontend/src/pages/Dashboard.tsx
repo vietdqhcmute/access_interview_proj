@@ -1,4 +1,4 @@
-import { Layout, Button, Tabs, Upload } from 'antd';
+import { Layout, Button, Tabs, Upload, Spin, Row, Col } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import useFetchCsvUpload from '../hooks/csv_dashboard/useFetchCsvUpload';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
@@ -15,7 +15,7 @@ const UPLOAD_API_DOMAIN = import.meta.env.VITE_API_URL || '/api/';
 
 export default function Dashboard() {
   const { token } = useAuth();
-  const { data: csvData } = useFetchCsvUpload();
+  const { data: csvData, isLoading} = useFetchCsvUpload();
   const { notifySuccess, notifyError } = useNotification();
 
   const inProgressUploads = useMemo(() =>
@@ -125,14 +125,20 @@ export default function Dashboard() {
             </Button>
           </Upload>
         </div>
-        <div style={{
-          background: '#fff',
-          padding: '24px',
-          borderRadius: '8px',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-        }}>
-          <Tabs defaultActiveKey="done" items={tabItems} />
-        </div>
+        {isLoading ? (<Row>
+          <Col className='flex justify-around' span={24}>
+            <Spin className='mt-4' />
+          </Col>
+        </Row>) : (
+          <div style={{
+            background: '#fff',
+            padding: '24px',
+            borderRadius: '8px',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+          }}>
+            <Tabs defaultActiveKey="done" items={tabItems} />
+          </div>
+        )}
       </Content>
     </Layout>
   );
