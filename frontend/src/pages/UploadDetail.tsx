@@ -1,41 +1,62 @@
 import { useParams } from 'react-router-dom';
-import { Layout, Tabs, Card, Row, Col, Statistic, Progress, Input, Spin } from 'antd';
+import { Layout, Tabs, Card, Row, Col, Statistic, Progress, Input, Spin, Pagination } from 'antd';
 import { FileTextOutlined, SearchOutlined } from '@ant-design/icons';
 import useFetchCsvUploadDetail from '../hooks/csv_dashboard/useFetchCsvUploadDetail';
 import PageHeader from '../components/PageHeader';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import KeyWordList from '../components/keyword-list/KeyWordList';
 import { getStatusLabel } from '../utils/handlers';
 
 const { Content } = Layout;
 
+interface Keyword {
+  id: number;
+  term: string;
+  status: string;
+  errorMessage?: string;
+  createdAt: string;
+}
+
 export default function UploadDetail() {
   const { id } = useParams();
-  const { data, isLoading } = useFetchCsvUploadDetail(Number(id));
-  const csvDetailData = data?.data?.attributes || {};
-  const keywords = csvDetailData?.keywords || [];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
-  const filteredKeywords = useMemo(() => {
-    return searchTerm === '' ? keywords : keywords.filter((kw: any) =>
-      kw.term?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  },
-    [keywords, searchTerm]
-  );
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setCurrentPage(1); // Reset to first page when search changes
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const { data, meta, isLoading } = useFetchCsvUploadDetail({
+    id: Number(id),
+    page: currentPage,
+    per_page: pageSize,
+    term: debouncedSearchTerm
+  });
+  const csvDetailData = data?.attributes || {};
+
+  const keywords = useMemo(() => {
+    return csvDetailData?.keywords || [];
+  }, [csvDetailData?.keywords]);
 
   const inProgressKeywords = useMemo(() =>
-    filteredKeywords.filter((kw: any) => kw.status === PROCESS_STATUS.PROCESSING),
-    [filteredKeywords]
+    keywords.filter((kw: Keyword) => kw.status === PROCESS_STATUS.PROCESSING),
+    [keywords]
   );
   const completedKeywords = useMemo(() =>
-    filteredKeywords.filter((kw: any) => kw.status === PROCESS_STATUS.SUCCESSFULL),
-    [filteredKeywords]
+    keywords.filter((kw: Keyword) => kw.status === PROCESS_STATUS.SUCCESSFULL),
+    [keywords]
   );
   const failedKeywords = useMemo(() =>
-    filteredKeywords.filter((kw: any) => kw.status === PROCESS_STATUS.FAILED),
-    [filteredKeywords]
+    keywords.filter((kw: Keyword) => kw.status === PROCESS_STATUS.FAILED),
+    [keywords]
   );
 
   const getProgress = () => {
@@ -50,7 +71,7 @@ export default function UploadDetail() {
       label: 'All Keywords',
       children: (
         <div style={{ padding: '24px' }}>
-          <KeyWordList uploadId={Number(id)} data={filteredKeywords} loading={false} />
+          <KeyWordList uploadId={Number(id)} data={keywords} loading={false} />
         </div>
       ),
     },
@@ -86,7 +107,7 @@ export default function UploadDetail() {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <PageHeader title={`Upload Detail - ${csvDetailData?.filename || `ID: ${id}`}`} backLink="/dashboard" />
-      {isLoading ? (<Spin className='mt-4' />) : (
+      {isLoading && searchTerm === '' ? (<Spin className='mt-4' />) : (
 
         <Content style={{ padding: '24px' }}>
           {/* CSV Upload Information Card */}
@@ -165,6 +186,17 @@ export default function UploadDetail() {
               allowClear
             />
             <Tabs defaultActiveKey="all" items={tabItems} />
+            <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'end' }}>
+              <Pagination
+                current={currentPage}
+                pageSize={pageSize}
+                total={meta?.total_count || 0}
+                onChange={(page, size) => {
+                  setCurrentPage(page);
+                  setPageSize(size);
+                }}
+              />
+            </div>
           </div>
         </Content>
       )}
