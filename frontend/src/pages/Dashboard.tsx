@@ -2,7 +2,7 @@ import { Layout, Button, Tabs, Upload, Spin, Row, Col } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import useFetchCsvUpload from '../hooks/csv_dashboard/useFetchCsvUpload';
 import { PROCESS_STATUS } from '../constants/dashboard-constants';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import CsvUploadList from '../components/csv-upload-list/CsvUploadList';
 import PageHeader from '../components/PageHeader';
 import useNotification from '../context/Notification/useNotification';
@@ -17,6 +17,7 @@ export default function Dashboard() {
   const { token } = useAuth();
   const { data: csvData, isLoading} = useFetchCsvUpload();
   const { notifySuccess, notifyError } = useNotification();
+  const [activeTab, setActiveTab] = useState('done');
 
   const inProgressUploads = useMemo(() =>
     csvData?.data?.map((item) => item.attributes).filter((item) => item.status === PROCESS_STATUS.PROCESSING) || [],
@@ -101,6 +102,7 @@ export default function Dashboard() {
     onChange(info: { file: { status?: string; name: string } }) {
       if (info.file.status === 'done') {
         notifySuccess(`${info.file.name} file uploaded successfully`);
+        setActiveTab('in-progress');
         console.log(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === 'error') {
         notifyError(`${info.file.name} file upload failed.`);
@@ -136,7 +138,11 @@ export default function Dashboard() {
             borderRadius: '8px',
             boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
           }}>
-            <Tabs defaultActiveKey="done" items={tabItems} />
+            <Tabs
+              activeKey={activeTab}
+              onChange={setActiveTab}
+              items={tabItems}
+            />
           </div>
         )}
       </Content>
