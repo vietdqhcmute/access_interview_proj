@@ -55,7 +55,6 @@ export default function Register() {
 
   const onFinish = async (values: RegisterFormValues) => {
     try {
-      console.log('Register values:', values);
       registrationMutate.mutate({
         user: {
           name: values.name,

@@ -39,7 +39,23 @@ class CsvUploadController < ApplicationController
 
   def show
     csv_upload = current_user.csv_uploads.find(params[:id])
-    render json: CsvUploadDetailSerializer.new(csv_upload).serializable_hash, status: :ok
+    page = params[:page] || 1
+    per_page = params[:per_page] || 25
+
+    keywords_query = csv_upload.keywords
+    keywords_query = keywords_query.where("term ILIKE ?", "%#{params[:term]}%") if params[:term].present?
+
+    paginated_keywords = keywords_query.page(page).per(per_page)
+
+    render json: {
+      data: CsvUploadDetailSerializer.new(csv_upload, params: { keywords: paginated_keywords }).serializable_hash[:data],
+      meta: {
+        current_page: paginated_keywords.current_page,
+        total_pages: paginated_keywords.total_pages,
+        total_count: paginated_keywords.total_count,
+        per_page: per_page.to_i
+      }
+    }, status: :ok
   end
 
   def destroy
