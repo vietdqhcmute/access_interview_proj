@@ -6,7 +6,7 @@ import { useMemo, useState } from 'react';
 import CsvUploadList from '../components/csv-upload-list/CsvUploadList';
 import PageHeader from '../components/PageHeader';
 import useNotification from '../context/Notification/useNotification';
-import { countCsvKeyword, readTextFromFile } from '../utils/handlers';
+import { validateCsvFile } from '../utils/handlers';
 import useAuth from '../context/Auth/useAuthContext';
 
 const { Content } = Layout;
@@ -15,7 +15,7 @@ const UPLOAD_API_DOMAIN = import.meta.env.VITE_API_URL || '/api/';
 
 export default function Dashboard() {
   const { token } = useAuth();
-  const { data: csvData, isLoading} = useFetchCsvUpload();
+  const { data: csvData, isLoading } = useFetchCsvUpload();
   const { notifySuccess, notifyError } = useNotification();
   const [activeTab, setActiveTab] = useState('done');
 
@@ -68,25 +68,6 @@ export default function Dashboard() {
     },
   ];
 
-  const validateCsvFile = (file: File) => {
-    const isCsv = file.type === 'text/csv' || file.name.endsWith('.csv');
-    if (!isCsv) {
-      notifyError('You can only upload CSV files!');
-    } else {
-      readTextFromFile(file).then((text) => {
-        const rowCount = countCsvKeyword(text);
-        if (rowCount > 100) {
-          notifyError('The CSV file must not contain more than 100 keywords.');
-          return false;
-        }
-      }).catch((error) => {
-        notifyError('Failed to read the CSV file.');
-        console.error('Error reading CSV file:', error);
-      });
-    }
-
-    return isCsv;
-  }
 
   const uploadProps = {
     name: 'file',
@@ -96,8 +77,8 @@ export default function Dashboard() {
     headers: {
       authorization: `Bearer ${token}`,
     },
-    beforeUpload(file: File) {
-      return validateCsvFile(file);
+    async beforeUpload(file: File) {
+      return await validateCsvFile(file, notifyError);
     },
     onChange(info: { file: { status?: string; name: string } }) {
       if (info.file.status === 'done') {
