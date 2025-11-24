@@ -1,28 +1,11 @@
-import { render, screen } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
-import { vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { setupCommonMocks, mockMutate } from "../utils/mockHooks";
+import { renderWithRouter } from "../utils/testHelpers";
+
+// Setup mocks before importing component
+setupCommonMocks();
+
 import PageHeader from "../../components/PageHeader";
-
-const mockMutate = vi.fn();
-
-// Mock the useAuth hook
-vi.mock("../../context/Auth/useAuthContext", () => ({
-  default: () => ({
-    user: { name: "Test User", email: "test@example.com" },
-    token: "mock-token",
-  }),
-}));
-
-// Mock the useLogoutMutate hook
-vi.mock("../../hooks/auth/useLogoutMutate", () => ({
-  default: () => ({
-    mutate: mockMutate,
-  }),
-}));
-
-const renderWithRouter = (component: React.ReactElement) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>); // Need this so getByRole("link") works
-};
 
 describe("PageHeader Component", () => {
   const mockTitle = "Test Page";
