@@ -1,9 +1,20 @@
 import { screen } from "@testing-library/react";
-import { setupCommonMocks, mockMutate } from "../utils/mockHooks";
+import { mockMutate, defaultMockUser } from "../utils/mockHooks";
 import { renderWithRouter } from "../utils/testHelpers";
 
 // Setup mocks before importing component
-setupCommonMocks();
+vi.mock("../../context/Auth/useAuthContext", () => ({
+  default: () => ({
+    user: defaultMockUser,
+    token: "mock-token",
+  }),
+}));
+
+vi.mock("../../hooks/auth/useLogoutMutate", () => ({
+  default: () => ({
+    mutate: mockMutate,
+  }),
+}));
 
 import PageHeader from "../../components/PageHeader";
 

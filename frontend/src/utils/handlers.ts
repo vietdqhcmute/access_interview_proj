@@ -41,3 +41,25 @@ export const countCsvKeyword = (csvText: string) => {
 
   return count;
 }
+
+export const validateCsvFile = async (file: File, notifyError: (message: string) => void): Promise<boolean> => {
+  const isCsv = file.type === 'text/csv' || file.name.endsWith('.csv');
+  if (!isCsv) {
+    notifyError('You can only upload CSV files!');
+    return false;
+  }
+
+  try {
+    const text = await readTextFromFile(file);
+    const rowCount = countCsvKeyword(text);
+    if (rowCount > 100) {
+      notifyError('The CSV file must not contain more than 100 keywords.');
+      return false;
+    }
+    return true;
+  } catch (error) {
+    notifyError('Failed to read the CSV file.');
+    console.error('Error reading CSV file:', error);
+    return false;
+  }
+}

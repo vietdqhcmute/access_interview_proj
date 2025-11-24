@@ -1,12 +1,18 @@
 import { vi } from "vitest";
 
-// Shared mock functions
+/**
+ * Shared mock functions that can be used across all tests
+ * Import these in your test files to use in vi.mock() or assertions
+ */
 export const mockMutate = vi.fn();
 export const mockNotifySuccess = vi.fn();
 export const mockNotifyError = vi.fn();
 export const mockRefetch = vi.fn();
 
-// Default mock data for useFetchCsvUpload
+/**
+ * Default mock data for useFetchCsvUpload hook
+ * Can be imported and used directly in vi.mock()
+ */
 export const defaultCsvUploadData = {
   data: {
     data: [
@@ -20,40 +26,17 @@ export const defaultCsvUploadData = {
   refetch: mockRefetch,
 };
 
-// Setup all common mocks - call this at the top of test files
-export const setupCommonMocks = () => {
-  // Mock the useAuth hook
-  vi.mock("../../context/Auth/useAuthContext", () => ({
-    default: () => ({
-      user: { name: "Test User", email: "test@example.com" },
-      token: "mock-token",
-    }),
-  }));
-
-  // Mock the useLogoutMutate hook
-  vi.mock("../../hooks/auth/useLogoutMutate", () => ({
-    default: () => ({
-      mutate: mockMutate,
-    }),
-  }));
-
-  // Mock the useNotification hook
-  vi.mock("../../context/Notification/useNotification", () => ({
-    default: () => ({
-      notifySuccess: mockNotifySuccess,
-      notifyError: mockNotifyError,
-    }),
-  }));
+/**
+ * Default mock user data
+ */
+export const defaultMockUser = {
+  name: "Test User",
+  email: "test@example.com",
 };
 
-// Setup CSV upload mock - call this in tests that need it
-export const setupCsvUploadMock = () => {
-  vi.mock("../../hooks/csv_dashboard/useFetchCsvUpload", () => ({
-    default: () => (defaultCsvUploadData),
-  }));
-};
-
-// Utility to clear all mocks
+/**
+ * Utility to clear all mocks between tests
+ */
 export const clearAllMocks = () => {
   mockMutate.mockClear();
   mockNotifySuccess.mockClear();
